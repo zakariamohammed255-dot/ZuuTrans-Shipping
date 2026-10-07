@@ -1,0 +1,445 @@
+(() => {
+  const config = window.ZUUTRANS_CONFIG;
+
+  // Shipment tracking
+  const trackingForm = document.getElementById('trackingForm');
+  const trackingInput = document.getElementById('trackingNumber');
+  const trackingMessage = document.getElementById('trackingMessage');
+  const trackingResult = document.getElementById('trackingResult');
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value ?? '—';
+  };
+
+  const formatDate = (value) => {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+  };
+
+  const getProgressIndex = (status) => {
+    const value = String(status || '').trim().toLowerCase();
+    if (value.includes('deliver')) return 3;
+    if (value.includes('transit') || value.includes('depart') || value.includes('shipped')) return 2;
+    if (value.includes('process') || value.includes('pickup') || value.includes('pick up') || value.includes('assigned') || value.includes('custom')) return 1;
+    if (value.includes('book') || value.includes('received') || value.includes('created') || value.includes('pending')) return 0;
+    return 1;
+  };
+
+  const renderTrackingProgress = (status) => {
+    const steps = [...document.querySelectorAll('#trackingTimeline .timeline-step')];
+    const lines = [...document.querySelectorAll('#trackingTimeline .timeline-line')];
+    const index = getProgressIndex(status);
+    steps.forEach((step, stepIndex) => {
+      step.classList.toggle('complete', stepIndex < index);
+      step.classList.toggle('current', stepIndex === index);
+      step.classList.toggle('upcoming', stepIndex > index);
+    });
+    lines.forEach((line, lineIndex) => line.classList.toggle('complete', lineIndex < index));
+
+    const title = document.getElementById('resultProgressTitle');
+    const hint = document.getElementById('resultProgressHint');
+    if (title) title.textContent = status || 'Current status';
+    if (hint) hint.textContent = index === 3 ? 'Shipment delivered' : 'Shipment is moving through the delivery process';
+  };
+
+  if (trackingForm && trackingInput && trackingMessage && trackingResult) {
+    trackingForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const trackingNumber = trackingInput.value.trim().toUpperCase();
+      trackingResult.classList.add('hidden');
+
+      if (!trackingNumber) {
+        trackingMessage.textContent = 'Please enter a tracking number.';
+        return;
+      }
+
+      if (!config?.supabaseUrl || !config?.supabasePublishableKey) {
+        trackingMessage.textContent = 'Supabase configuration is missing.';
+        return;
+      }
+
+      trackingMessage.textContent = 'Checking shipment status…';
+
+      try {
+        const response = await fetch(
+          `${config.supabaseUrl}/rest/v1/rpc/get_shipment_by_tracking_number`,
+          {
+            method: 'POST',
+            headers: {
+              apikey: config.supabasePublishableKey,
+              Authorization: `Bearer ${config.supabasePublishableKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ tracking_number_input: trackingNumber })
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || `Request failed (${response.status})`);
+        }
+
+        const rows = await response.json();
+        if (!Array.isArray(rows) || rows.length === 0) {
+          trackingMessage.textContent = `No shipment was found for ${trackingNumber}. Please check the tracking number and try again.`;
+          return;
+        }
+
+        const shipment = rows[0];
+        setText('resultTrackingNumber', shipment.tracking_number);
+        setText('resultOrigin', shipment.origin);
+        setText('resultDestination', shipment.destination);
+        setText('resultMethod', shipment.shipping_method);
+        setText('resultCargo', shipment.cargo_description);
+        setText('resultUpdated', formatDate(shipment.last_update));
+        setText('resultStatus', shipment.status);
+        const statusBadge = document.getElementById('resultStatus');
+        if (statusBadge) {
+          statusBadge.className = 'status-badge';
+          const statusClass = String(shipment.status || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          if (statusClass) statusBadge.classList.add(`status-${statusClass}`);
+        }
+        renderTrackingProgress(shipment.status);
+        trackingMessage.textContent = '';
+        trackingResult.classList.remove('hidden');
+        trackingResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (error) {
+        console.error(error);
+        trackingMessage.textContent = 'We could not check the shipment right now. Please try again.';
+      }
+    });
+  }
+
+  // Netlify Forms: submit the quote request with AJAX so there is no 404 redirect.
+  const quoteForm = document.getElementById('quoteForm');
+  const quoteMessage = document.getElementById('quoteMessage');
+  const quoteSubmit = document.getElementById('quoteSubmit');
+
+  if (quoteForm && quoteMessage) {
+    quoteForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      quoteMessage.textContent = 'Sending your quote request…';
+      quoteMessage.classList.remove('success', 'error');
+      if (quoteSubmit) quoteSubmit.disabled = true;
+
+      try {
+        // When opened directly from the computer (file://), Netlify Forms cannot
+        // receive the POST. Treat this as a local readiness test instead of
+        // showing a misleading error. The real submission runs on Netlify.
+        if (window.location.protocol === 'file:') {
+          quoteForm.reset();
+          quoteMessage.textContent = 'Local test successful. This quote form is ready for Netlify. Once the website is live, submissions will be sent through Netlify Forms.';
+          quoteMessage.classList.add('success');
+          return;
+        }
+
+        const formData = new FormData(quoteForm);
+        const body = new URLSearchParams(formData).toString();
+        const response = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        });
+
+        if (!response.ok) {
+          throw new Error(`Form submission failed (${response.status})`);
+        }
+
+        quoteForm.reset();
+        quoteMessage.textContent = 'Thank you. Your quote request has been sent to ZuuTrans Shipping. We will get back to you soon.';
+        quoteMessage.classList.add('success');
+      } catch (error) {
+        console.error(error);
+        quoteMessage.textContent = 'We could not send your request right now. Please try again or contact us on WhatsApp.';
+        quoteMessage.classList.add('error');
+      } finally {
+        if (quoteSubmit) quoteSubmit.disabled = false;
+      }
+    });
+  }
+
+
+  // Customs planning calculator
+  const customsForm = document.getElementById('customsForm');
+  const customsResult = document.getElementById('customsResult');
+  if (customsForm && customsResult) {
+    const money = (value) => `GHS ${Number(value).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    customsForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const cif = Number(document.getElementById('customsValue').value) || 0;
+      const dutyRate = Number(document.getElementById('dutyRate').value) || 0;
+      const other = Number(document.getElementById('otherLevies').value) || 0;
+      const transport = Number(document.getElementById('zuutransCost').value) || 0;
+      if (cif <= 0) return;
+      const duty = cif * dutyRate / 100;
+      const taxBase = cif + duty + other;
+      const nhil = taxBase * 0.025;
+      const getfund = taxBase * 0.025;
+      const vat = taxBase * 0.15;
+      const total = cif + duty + other + nhil + getfund + vat + transport;
+      const values = { calcCif: cif, calcDuty: duty, calcOther: other, calcTaxBase: taxBase, calcNhil: nhil, calcGetfund: getfund, calcVat: vat, calcTransport: transport, calcTotal: total };
+      Object.entries(values).forEach(([id, value]) => setText(id, money(value)));
+      setText('customsDutyBadge', `${dutyRate}% duty band`);
+      customsResult.classList.remove('hidden');
+      customsResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+
+  // Mobile navigation menu
+  const menuToggle = document.querySelector('.menu-toggle');
+  const mobileNav = document.getElementById('mobileNav');
+  if (menuToggle && mobileNav) {
+    const closeMenu = () => {
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open navigation menu');
+      mobileNav.classList.remove('open');
+    };
+
+    menuToggle.addEventListener('click', () => {
+      const open = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', String(!open));
+      menuToggle.setAttribute('aria-label', open ? 'Open navigation menu' : 'Close navigation menu');
+      mobileNav.classList.toggle('open', !open);
+    });
+
+    mobileNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+    document.addEventListener('click', (event) => {
+      if (!mobileNav.contains(event.target) && !menuToggle.contains(event.target)) closeMenu();
+    });
+  }
+
+  const year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
+})();
+
+/* Paid car duty checker — Paystack-connected front end + Auto.dev VIN decoding */
+(function(){
+  const balanceEl=document.getElementById('dutyTokenBalance');
+  const noticeEl=document.getElementById('tokenPaymentNotice');
+  const tabs=document.querySelectorAll('.duty-tab');
+  const vinFields=document.getElementById('dutyVinFields');
+  const detailFields=document.getElementById('dutyDetailFields');
+  const report=document.getElementById('dutyReportPreview');
+  const run=document.getElementById('runDutyCheck');
+  const emailEl=document.getElementById('dutyCustomerEmail');
+  const phoneEl=document.getElementById('dutyCustomerPhone');
+  if(!balanceEl) return;
+
+  const config=window.ZUUTRANS_CONFIG||{};
+  const INITIALIZE_URL=config.paystackInitializeUrl||'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/paystack-initialize';
+  const STATUS_URL=config.paystackStatusUrl||'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/paystack-status';
+  const VIN_DECODE_URL=config.vinDecodeUrl||'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/vin-decode';
+  const SUPABASE_KEY=config.supabasePublishableKey||'';
+
+  let tokens=Number(sessionStorage.getItem('zuutransDutyTokens')||0);
+  const render=()=>balanceEl.textContent=String(tokens);
+
+  const showNotice=(message,type='')=>{
+    noticeEl.className='token-payment-notice';
+    noticeEl.classList.remove('hidden');
+    if(type) noticeEl.classList.add(type);
+    noticeEl.textContent=message;
+  };
+
+  const setBusy=(busy)=>{
+    document.querySelectorAll('.token-buy').forEach(b=>{
+      b.disabled=busy;
+      b.textContent=busy?'Connecting…':b.dataset.originalLabel||b.textContent;
+    });
+  };
+
+  document.querySelectorAll('.token-buy').forEach(btn=>{
+    btn.dataset.originalLabel=btn.textContent;
+  });
+
+  render();
+
+  const savedEmail=sessionStorage.getItem('zuutransDutyEmail')||'';
+  const savedPhone=sessionStorage.getItem('zuutransDutyPhone')||'';
+  if(emailEl && savedEmail) emailEl.value=savedEmail;
+  if(phoneEl && savedPhone) phoneEl.value=savedPhone;
+
+  async function refreshPaymentStatus(reference){
+    if(!reference || !SUPABASE_KEY) return;
+
+    showNotice('Confirming your payment and checking your duty tokens…','info');
+
+    try{
+      const res=await fetch(STATUS_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY},
+        body:JSON.stringify({reference})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok || !data.success) throw new Error(data.error||'Payment confirmation is still pending.');
+      tokens=Number(data.token_balance||0);
+      sessionStorage.setItem('zuutransDutyTokens',String(tokens));
+      render();
+      showNotice(`Payment confirmed. Your ZuuTrans wallet now has ${tokens} duty-check token${tokens===1?'':'s'}.`,'success');
+      const cleanUrl=window.location.origin+window.location.pathname+'#car-duty';
+      window.history.replaceState({},document.title,cleanUrl);
+    }catch(err){
+      showNotice(err.message||'Payment confirmation is still pending. Please refresh after a short while.','info');
+    }
+  }
+
+  const params=new URLSearchParams(window.location.search);
+  const returnedReference=params.get('reference')||params.get('trxref')||'';
+  if(returnedReference) refreshPaymentStatus(returnedReference);
+
+  document.querySelectorAll('.token-buy').forEach(btn=>btn.addEventListener('click',async()=>{
+    const packageMap={1:'starter',5:'standard',10:'business'};
+    const count=Number(btn.dataset.tokens||0);
+    const price=Number(btn.dataset.price||0);
+    const email=(emailEl?.value||'').trim().toLowerCase();
+    const phone=(phoneEl?.value||'').trim();
+    if(!email || !email.includes('@')){
+      showNotice('Please enter a valid payment email before choosing a package.','error');
+      emailEl?.focus(); return;
+    }
+    const packageId=packageMap[count];
+    if(!packageId){ showNotice('Invalid duty-check package.','error'); return; }
+    sessionStorage.setItem('zuutransDutyEmail',email);
+    sessionStorage.setItem('zuutransDutyPhone',phone);
+    setBusy(true);
+    showNotice(`Starting secure Paystack checkout for ${count} token${count===1?'':'s'} — GHS ${price}…`,'info');
+    try{
+      const res=await fetch(INITIALIZE_URL,{
+        method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY},
+        body:JSON.stringify({email,phone,package:packageId})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok || !data.success) throw new Error(data.error||'Unable to start payment.');
+      if(!data.authorization_url) throw new Error('Paystack checkout URL was not returned.');
+      showNotice('Paystack checkout is ready. Opening secure payment…','success');
+      window.location.href=data.authorization_url;
+    }catch(err){
+      showNotice(err.message||'Unable to start payment. Please try again.','error');
+      setBusy(false);
+    }
+  }));
+
+  tabs.forEach(tab=>tab.addEventListener('click',()=>{
+    tabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const type=tab.dataset.dutyTab;
+    vinFields.classList.toggle('hidden',type!=='vin');
+    detailFields.classList.toggle('hidden',type!=='details');
+    report.classList.add('hidden');
+  }));
+
+  function setReport(id,value){
+    const el=document.getElementById(id);
+    if(el) el.textContent=value || 'Not available';
+  }
+
+  function cleanAutoDevPayload(data){
+    // The deployed debug function currently returns autoDevResponse as JSON text.
+    let raw=data;
+    if(typeof raw==='string'){
+      try{ raw=JSON.parse(raw); }catch(_){ raw={}; }
+    }
+    if(raw && raw.autoDevResponse){
+      try{ raw=JSON.parse(raw.autoDevResponse); }catch(_){ raw={}; }
+    }
+    return raw || {};
+  }
+
+  async function decodeVin(vin){
+    const res=await fetch(VIN_DECODE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY},
+      body:JSON.stringify({vin})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||'Unable to decode this VIN.');
+    const vehicle=cleanAutoDevPayload(data);
+    if(vehicle.error) throw new Error(vehicle.error);
+    return vehicle;
+  }
+
+  run?.addEventListener('click',async()=>{
+    if(tokens<1){
+      showNotice('You need at least 1 duty-check token before generating a report. Choose a package above.','error');
+      document.getElementById('duty-token-shop')?.scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+
+    const active=document.querySelector('.duty-tab.active')?.dataset.dutyTab||'vin';
+    let vehicle='Vehicle details';
+    let vin='—';
+
+    if(active==='vin'){
+      vin=(document.getElementById('dutyVin')?.value||'').trim().toUpperCase();
+      if(!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)){
+        showNotice('Please enter a valid 17-character VIN.','error'); return;
+      }
+
+      run.disabled=true;
+      run.innerHTML='Decoding VIN…';
+      showNotice('Checking the VIN and retrieving vehicle details…','info');
+
+      try{
+        const data=await decodeVin(vin);
+        const year=data?.vehicle?.year || data?.year || '—';
+        const make=data?.vehicle?.make || data?.make || '—';
+        const model=data?.vehicle?.model || data?.model || '—';
+        const trim=data?.trim || '—';
+        const engine=data?.engine || '—';
+        const fuel=data?.fuelType || data?.fuel || '—';
+        const body=data?.body || data?.style || '—';
+        const transmission=data?.transmission || '—';
+        const drive=data?.drive || data?.drivetrain || data?.drivenWheels || '—';
+        const origin=data?.origin || '—';
+
+        vehicle=`${year} ${make} ${model}`.replace(/\s+/g,' ').trim();
+        setReport('reportVehicle',vehicle);
+        setReport('reportVin',vin);
+        setReport('reportYear',year);
+        setReport('reportTrim',trim);
+        setReport('reportEngine',engine);
+        setReport('reportFuel',fuel);
+        setReport('reportBody',body);
+        setReport('reportTransmission',transmission);
+        setReport('reportDrive',drive);
+        setReport('reportOrigin',origin);
+        setReport('reportMessage','Vehicle information decoded successfully. Your duty token has not been deducted yet.');
+        report.classList.remove('hidden');
+        showNotice('VIN decoded successfully. Vehicle details are ready for the duty calculation.','success');
+        report.scrollIntoView({behavior:'smooth',block:'center'});
+      }catch(err){
+        showNotice(err.message||'VIN decoding failed. Please check the VIN and try again.','error');
+      }finally{
+        run.disabled=false;
+        run.innerHTML='Check My Duty <span>→</span>';
+      }
+      return;
+    }
+
+    const make=(document.getElementById('dutyMake')?.value||'').trim();
+    const model=(document.getElementById('dutyModel')?.value||'').trim();
+    const year=(document.getElementById('dutyYear')?.value||'').trim();
+    if(!make||!model||!year){
+      showNotice('Please complete the make, model and year fields.','error'); return;
+    }
+    vehicle=`${make} ${model} (${year})`;
+    setReport('reportVehicle',vehicle);
+    setReport('reportVin','Not provided');
+    setReport('reportYear',year);
+    setReport('reportTrim','Not provided');
+    setReport('reportEngine','Not provided');
+    setReport('reportFuel','Not provided');
+    setReport('reportBody','Not provided');
+    setReport('reportTransmission','Not provided');
+    setReport('reportDrive','Not provided');
+    setReport('reportOrigin','Not provided');
+    setReport('reportMessage','Vehicle details saved. Duty calculation will be added after the valuation layer is connected.');
+    report.classList.remove('hidden');
+    showNotice('Vehicle details are ready for the duty calculation.','success');
+    report.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+})();

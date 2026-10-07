@@ -1,0 +1,31 @@
+ZuuTrans Customer Account Login
+
+The Duty Checker is locked until a customer creates an account or logs in.
+
+Customer fields:
+- Email address
+- Phone / WhatsApp
+- Password (minimum 6 characters)
+
+ACCOUNT CREATION
+Account creation is handled by the duty-signup Supabase Edge Function using the server-only service-role key. The Auth user is created with email_confirm=true, so customers do NOT depend on a confirmation email being delivered.
+
+Deploy these Edge Functions from supabase/functions:
+1. duty-signup (new)
+2. duty-account
+3. duty-balance
+4. paystack-initialize
+5. paystack-status
+6. vin-decode
+
+SUPABASE AUTH
+Email/password sign-in must be enabled. Email confirmation can remain enabled because duty-signup explicitly confirms the account server-side.
+
+SECURITY
+- Never put the Supabase service-role key in browser files.
+- Keep SUPABASE_SERVICE_ROLE_KEY only as an Edge Function secret.
+
+INITIAL TOKEN RULE
+- Every newly created customer account starts with exactly 0 tokens.
+- Tokens are added only after a verified Paystack purchase.
+- Existing customers keep their previously purchased balance when they log back in.

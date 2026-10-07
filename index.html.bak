@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZuuTrans Shipping | Delivering Trust Across Borders</title>
+  <meta name="description" content="ZuuTrans Shipping provides reliable shipping and logistics solutions from Ghana to destinations worldwide.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#home" aria-label="ZuuTrans Shipping home">
+        <span class="brand-mark">ZT</span>
+        <span>
+          <strong>ZuuTrans</strong>
+          <small>Shipping</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#tracking">Tracking</a>
+        <a href="#customs">Customs</a>
+        <a href="#car-duty">Car Duty</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn btn-primary nav-cta" href="#contact">Get a Quote</a>
+      <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="mobileNav" class="mobile-nav" aria-label="Mobile navigation">
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#tracking">Tracking</a>
+        <a href="#customs">Customs</a>
+        <a href="#car-duty">Car Duty</a>
+        <a href="#contact">Contact</a>
+        <a class="mobile-nav-cta" href="#contact">Get a Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="hero flyer-home" aria-label="ZuuTrans Shipping homepage">
+      <div class="flyer-home-overlay"></div>
+      <div class="container flyer-home-content">
+        <div class="hero-intro-panel">
+          <p class="eyebrow">ZUUTRANS SHIPPING</p>
+          <h1>Move your cargo with confidence.</h1>
+          <p>Reliable shipping, container transport, customs support and cargo coordination from Ghana to destinations worldwide.</p>
+        </div>
+        <div class="flyer-home-actions">
+          <a class="btn btn-primary" href="#tracking">Track Shipment</a>
+          <a class="btn btn-secondary" href="#contact">Get a Quote</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="tracking" class="tracking-section">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="eyebrow">SHIPMENT TRACKING</p>
+          <h2>Where is your shipment?</h2>
+          <p>Enter your ZuuTrans tracking number to view the latest shipment status.</p>
+        </div>
+
+        <form id="trackingForm" class="tracking-form" autocomplete="off">
+          <label class="sr-only" for="trackingNumber">Tracking number</label>
+          <input id="trackingNumber" name="trackingNumber" placeholder="e.g. ZTS-100001" required>
+          <button class="btn btn-primary" type="submit">Track Shipment</button>
+        </form>
+        <p id="trackingMessage" class="form-message" role="status"></p>
+
+        <article id="trackingResult" class="tracking-result hidden" aria-live="polite">
+          <div class="result-top">
+            <div>
+              <span class="result-label">TRACKING NUMBER</span>
+              <h3 id="resultTrackingNumber">—</h3>
+            </div>
+            <span id="resultStatus" class="status-badge">—</span>
+          </div>
+          <div class="result-grid">
+            <div><span>Origin</span><strong id="resultOrigin">—</strong></div>
+            <div><span>Destination</span><strong id="resultDestination">—</strong></div>
+            <div><span>Shipping method</span><strong id="resultMethod">—</strong></div>
+            <div><span>Cargo</span><strong id="resultCargo">—</strong></div>
+            <div><span>Last update</span><strong id="resultUpdated">—</strong></div>
+          </div>
+
+          <div class="tracking-progress" aria-label="Shipment progress">
+            <div class="tracking-progress-head">
+              <div>
+                <span class="result-label">SHIPMENT PROGRESS</span>
+                <h4 id="resultProgressTitle">Current status</h4>
+              </div>
+              <span id="resultProgressHint" class="progress-hint">Latest update shown above</span>
+            </div>
+            <div id="trackingTimeline" class="tracking-timeline">
+              <div class="timeline-step" data-step="Booked"><span class="timeline-dot"></span><span>Booked</span></div>
+              <div class="timeline-line"></div>
+              <div class="timeline-step" data-step="Processing"><span class="timeline-dot"></span><span>Processing</span></div>
+              <div class="timeline-line"></div>
+              <div class="timeline-step" data-step="In Transit"><span class="timeline-dot"></span><span>In Transit</span></div>
+              <div class="timeline-line"></div>
+              <div class="timeline-step" data-step="Delivered"><span class="timeline-dot"></span><span>Delivered</span></div>
+            </div>
+          </div>
+
+          <p class="tracking-disclaimer">Tracking information is based on the latest shipment record available to ZuuTrans Shipping. Dates and status may change as the shipment progresses.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="customs" class="section customs-section">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="eyebrow customs-eyebrow">GHANA CUSTOMS ESTIMATE</p>
+          <h2>Estimate your import costs.</h2>
+          <p>Use this planning calculator to estimate customs duty, NHIL, GETFund Levy and VAT on an import. The final amount is determined through the official customs assessment.</p>
+        </div>
+
+        <div class="customs-panel">
+          <form id="customsForm" class="customs-form" autocomplete="off">
+            <div class="customs-form-grid">
+              <label>
+                Customs / CIF value (GHS)
+                <input id="customsValue" name="customs_value" type="number" min="0" step="0.01" placeholder="e.g. 100000" required>
+              </label>
+              <label>
+                Import duty band
+                <select id="dutyRate" name="duty_rate" required>
+                  <option value="">Select band</option>
+                  <option value="0">0% — Essential social goods</option>
+                  <option value="5">5% — Basic necessities / inputs / capital goods</option>
+                  <option value="10">10% — Inputs and intermediary products</option>
+                  <option value="20">20% — Finished goods</option>
+                  <option value="35">35% — Specific goods for economic development</option>
+                </select>
+              </label>
+              <label>
+                Other applicable import duties / taxes before VAT & levies (GHS)
+                <input id="otherLevies" name="other_levies" type="number" min="0" step="0.01" value="0" placeholder="0.00">
+              </label>
+              <label>
+                ZuuTrans transport / handling (GHS)
+                <input id="zuutransCost" name="zuutrans_cost" type="number" min="0" step="0.01" value="0" placeholder="0.00">
+              </label>
+            </div>
+            <button class="btn btn-primary" type="submit">Calculate Estimate</button>
+            <p class="customs-note">GRA uses five import-duty bands: 0%, 5%, 10%, 20% and 35%. For this planning estimate, VAT is 15% and NHIL and GETFund Levy are 2.5% each. The tax base is calculated from the customs/CIF value plus the selected import duty and other applicable import taxes entered above. Actual assessment can vary by HS classification, exemptions and other applicable charges.</p>
+          </form>
+
+          <div id="customsResult" class="customs-result hidden" aria-live="polite">
+            <div class="result-top">
+              <div><span class="result-label">ESTIMATED IMPORT COST</span><h3>Planning estimate</h3></div>
+              <span id="customsDutyBadge" class="status-badge">—</span>
+            </div>
+            <div class="customs-result-grid">
+              <div><span>Customs / CIF value</span><strong id="calcCif">GHS 0.00</strong></div>
+              <div><span>Import duty</span><strong id="calcDuty">GHS 0.00</strong></div>
+              <div><span>Other applicable import duties / taxes</span><strong id="calcOther">GHS 0.00</strong></div>
+              <div><span>Taxable base for VAT / NHIL / GETFund</span><strong id="calcTaxBase">GHS 0.00</strong></div>
+              <div><span>NHIL (2.5%)</span><strong id="calcNhil">GHS 0.00</strong></div>
+              <div><span>GETFund Levy (2.5%)</span><strong id="calcGetfund">GHS 0.00</strong></div>
+              <div><span>VAT (15%)</span><strong id="calcVat">GHS 0.00</strong></div>
+              <div><span>ZuuTrans transport / handling</span><strong id="calcTransport">GHS 0.00</strong></div>
+              <div class="customs-total"><span>Estimated total</span><strong id="calcTotal">GHS 0.00</strong></div>
+            </div>
+            <p class="customs-result-note">This is an estimate for planning purposes, not a customs assessment or tax bill. For formal clearance, classification and valuation should be confirmed through the official Ghana Customs / ICUMS process.</p>
+            <a class="customs-source" href="https://gra.gov.gh/customs/customs-tariffs-and-levies/" target="_blank" rel="noopener">View GRA Customs Tariffs &amp; Levies</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="car-duty" class="section car-duty-section">
+      <div class="container">
+        <div class="car-duty-hero">
+          <div class="car-duty-hero-copy">
+            <div class="official-pill"><span class="pill-dot"></span> ZUUTRANS • VEHICLE DUTY SERVICE</div>
+            <p class="eyebrow car-duty-eyebrow">CAR DUTY CHECKER</p>
+            <h2>Know your Ghana vehicle duty before you buy or ship.</h2>
+            <p class="car-duty-lead">Enter your vehicle details, purchase a duty-check token, and unlock a detailed vehicle duty report. The service is designed for importers, buyers and dealers who want a clear cost picture before clearance.</p>
+            <div class="car-duty-hero-actions">
+              <a class="btn btn-primary" href="#duty-token-shop">Buy a Duty Check <span>→</span></a>
+              <a class="car-duty-text-link" href="#duty-lookup">Already have a token? Check your car</a>
+            </div>
+          </div>
+          <div class="car-duty-visual" aria-hidden="true">
+            <div class="car-duty-visual-top"><span>ZUUTRANS DUTY REPORT</span><span>GHANA</span></div>
+            <div class="car-duty-car-card">
+              <div class="car-icon">VIN</div>
+              <div><strong>Vehicle Duty Report</strong><small>VIN • Make • Model • Year</small></div>
+            </div>
+            <div class="car-duty-metrics">
+              <div><span>Access</span><strong>1 Token</strong></div>
+              <div><span>Report</span><strong>Itemised</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="duty-token-shop" class="duty-business-card">
+          <div class="duty-business-heading">
+            <div>
+              <span class="result-label">PAY AS YOU CHECK</span>
+              <h3>Choose your duty-check package</h3>
+              <p>One token unlocks one vehicle duty report. Choose a package, complete secure payment, and use your tokens whenever you need a vehicle duty report.</p>
+            </div>
+            <div class="token-balance"><span>YOUR TOKENS</span><strong id="dutyTokenBalance">0</strong></div>
+          </div>
+          <div class="duty-customer-fields">
+            <label>
+              Payment email
+              <input id="dutyCustomerEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+            </label>
+            <label>
+              Phone / WhatsApp <span class="field-optional">(optional)</span>
+              <input id="dutyCustomerPhone" type="tel" placeholder="e.g. +233 548 846 644" autocomplete="tel">
+            </label>
+          </div>
+          <p class="duty-payment-help">Your email is used to create your ZuuTrans duty-check wallet and match your Paystack payment to your tokens.</p>
+          <div class="token-packages">
+            <article class="token-package">
+              <div class="token-package-top"><span class="token-label">SINGLE CHECK</span><span class="token-count">1 CHECK</span></div>
+              <h4>Starter</h4>
+              <div class="token-price">GHS 15</div>
+              <p>For one vehicle duty report.</p>
+              <button type="button" class="btn btn-primary token-buy" data-tokens="1" data-price="10">Buy 1 Token</button>
+            </article>
+            <article class="token-package token-package-featured">
+              <div class="token-package-top"><span class="token-label">POPULAR</span><span class="token-count">5 CHECKS</span></div>
+              <h4>Standard</h4>
+              <div class="token-price">GHS 75</div>
+              <p>For buyers checking several vehicles.</p>
+              <button type="button" class="btn btn-primary token-buy" data-tokens="5" data-price="40">Buy 5 Tokens</button>
+            </article>
+            <article class="token-package">
+              <div class="token-package-top"><span class="token-label">BUSINESS</span><span class="token-count">10 CHECKS</span></div>
+              <h4>Business</h4>
+              <div class="token-price">GHS 150</div>
+              <p>For dealers and frequent importers.</p>
+              <button type="button" class="btn btn-primary token-buy" data-tokens="10" data-price="70">Buy 10 Tokens</button>
+            </article>
+          </div>
+          <div id="tokenPaymentNotice" class="token-payment-notice hidden" role="status"></div>
+        </div>
+
+        <div id="duty-lookup" class="duty-business-card duty-lookup-card">
+          <div class="duty-business-heading lookup-heading">
+            <div>
+              <span class="result-label">USE YOUR TOKEN</span>
+              <h3>Check a vehicle</h3>
+              <p>Enter a VIN/chassis number when available. If you do not have one, use the vehicle details option.</p>
+            </div>
+            <div class="token-required"><span>REQUIRED</span><strong>1 TOKEN</strong></div>
+          </div>
+          <div class="duty-check-form">
+            <div class="duty-search-tabs" role="tablist" aria-label="Vehicle search type">
+              <button type="button" class="duty-tab active" data-duty-tab="vin">VIN / Chassis</button>
+              <button type="button" class="duty-tab" data-duty-tab="details">Make, Model &amp; Year</button>
+            </div>
+            <div id="dutyVinFields" class="duty-field-panel">
+              <label>VIN / Chassis Number<input id="dutyVin" type="text" placeholder="Enter VIN or chassis number" autocomplete="off"></label>
+              <label>Assessment Date<input id="dutyAssessmentDate" type="date"></label>
+            </div>
+            <div id="dutyDetailFields" class="duty-field-panel hidden">
+              <label>Make<input id="dutyMake" type="text" placeholder="e.g. Toyota"></label>
+              <label>Model<input id="dutyModel" type="text" placeholder="e.g. Camry"></label>
+              <label>Year of Manufacture<input id="dutyYear" type="number" min="1900" max="2099" placeholder="e.g. 2022"></label>
+              <label>Assessment Date<input id="dutyAssessmentDateDetails" type="date"></label>
+            </div>
+            <div class="duty-check-bottom">
+              <div class="checker-trust"><span>✓</span><div><strong>1 token unlocks 1 vehicle report</strong><small>Your token is used only when a duty report is generated.</small></div></div>
+              <button type="button" class="btn btn-primary checker-main-btn" id="runDutyCheck">Check My Duty <span>→</span></button>
+            </div>
+          </div>
+          <div id="dutyReportPreview" class="duty-report-preview hidden" aria-live="polite">
+            <div class="report-header"><div><span class="result-label">SAMPLE REPORT LAYOUT</span><h4>Vehicle Duty Report</h4></div><span class="report-status">PREVIEW</span></div>
+            <div class="report-grid">
+              <div><span>Vehicle</span><strong id="reportVehicle">—</strong></div>
+              <div><span>VIN / Chassis</span><strong id="reportVin">—</strong></div>
+              <div><span>Year</span><strong id="reportYear">—</strong></div>
+              <div><span>Trim</span><strong id="reportTrim">—</strong></div>
+              <div><span>Engine</span><strong id="reportEngine">—</strong></div>
+              <div><span>Fuel type</span><strong id="reportFuel">—</strong></div>
+              <div><span>Body type</span><strong id="reportBody">—</strong></div>
+              <div><span>Transmission</span><strong id="reportTransmission">—</strong></div>
+              <div><span>Drive type</span><strong id="reportDrive">—</strong></div>
+              <div><span>Origin</span><strong id="reportOrigin">—</strong></div>
+            </div>
+            <p id="reportMessage">Vehicle information decoded successfully. Ghana duty valuation will be shown once the duty calculation service is connected.</p>
+          </div>
+        </div>
+
+        <div class="duty-data-note"><strong>Important:</strong> ZuuTrans will not display a made-up “exact” customs amount. The paid checker will use a verified vehicle valuation/data source and current Ghana customs rules, while the final binding assessment remains with Ghana Customs/ICUMS.</div>
+      </div>
+    </section>
+
+<section class="duty-clearance-cta" aria-label="Customs clearance assistance">
+  <div class="duty-clearance-copy">
+    <span class="duty-clearance-kicker">NEED HELP WITH CUSTOMS CLEARANCE?</span>
+    <h3>We can also help you with customs clearance.</h3>
+    <p>After checking your vehicle duty, ZuuTrans Shipping can also assist with customs clearance, documentation and cargo release.</p>
+  </div>
+  <a class="duty-clearance-btn" href="#contact">Talk to ZuuTrans</a>
+</section>
+
+
+    <section id="services" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">WHAT WE DO</p>
+          <h2>Shipping solutions that fit the journey.</h2>
+        </div>
+        <div class="service-grid service-grid-enhanced">
+          <article class="service-card service-card-enhanced">
+            <div class="service-media"><img class="service-image" src="service-images/international-shipping.jpg" alt="International shipping by air and sea"><span class="service-tag">GLOBAL SHIPPING</span><span class="service-number service-number-overlay">01</span></div>
+            <div class="service-card-body"><p class="service-kicker">AIR &amp; SEA</p><h3>International Shipping</h3><p>Move parcels and cargo between Ghana and international destinations with organized shipping support.</p><a class="service-link" href="#contact">Request shipping support <span>→</span></a></div>
+          </article>
+          <article class="service-card service-card-enhanced">
+            <div class="service-media"><img class="service-image" src="service-images/freight-forwarding.jpg" alt="Freight forwarding with ship and container truck"><span class="service-tag">LOGISTICS</span><span class="service-number service-number-overlay">02</span></div>
+            <div class="service-card-body"><p class="service-kicker">COORDINATION</p><h3>Freight Forwarding</h3><p>Coordinate cargo movement and the logistics steps between origin and destination.</p><a class="service-link" href="#contact">Plan your shipment <span>→</span></a></div>
+          </article>
+          <article class="service-card service-card-enhanced">
+            <div class="service-media"><img class="service-image" src="service-images/customs-clearance.jpg" alt="Customs clearance service"><span class="service-tag">CLEARANCE</span><span class="service-number service-number-overlay">03</span></div>
+            <div class="service-card-body"><p class="service-kicker">IMPORT &amp; EXPORT</p><h3>Customs Clearance</h3><p>Support the documentation and clearance process for imports and exports.</p><a class="service-link" href="#customs">Estimate customs costs <span>→</span></a></div>
+          </article>
+          <article class="service-card service-card-enhanced">
+            <div class="service-media"><img class="service-image" src="service-images/door-to-door.jpg" alt="Door-to-door delivery by container truck"><span class="service-tag">LAST MILE</span><span class="service-number service-number-overlay">04</span></div>
+            <div class="service-card-body"><p class="service-kicker">DELIVERY</p><h3>Door-to-Door Delivery</h3><p>Convenient delivery support for shipments that need a smoother final-mile experience.</p><a class="service-link" href="#contact">Arrange delivery <span>→</span></a></div>
+          </article>
+          <article class="service-card service-card-enhanced">
+            <div class="service-media"><img class="service-image" src="service-images/cargo-logistics.jpg" alt="Cargo and logistics warehouse operations"><span class="service-tag">CARGO</span><span class="service-number service-number-overlay">05</span></div>
+            <div class="service-card-body"><p class="service-kicker">CARGO HANDLING</p><h3>Cargo &amp; Logistics</h3><p>Practical logistics coordination for businesses and individuals moving goods.</p><a class="service-link" href="#contact">Discuss your cargo <span>→</span></a></div>
+          </article>
+          <article class="service-card service-card-enhanced">
+            <div class="service-media"><img class="service-image" src="service-images/import-export.jpg" alt="Import and export logistics support"><span class="service-tag">TRADE SUPPORT</span><span class="service-number service-number-overlay">06</span></div>
+            <div class="service-card-body"><p class="service-kicker">CROSS-BORDER</p><h3>Import &amp; Export Support</h3><p>Guidance and coordination for customers managing cross-border trade and cargo movement.</p><a class="service-link" href="#contact">Get trade support <span>→</span></a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section section-soft about-section-rich">
+      <div class="about-shipping-words" aria-hidden="true">
+        <span class="ship-word ship-word-1">SEA FREIGHT</span>
+        <span class="ship-word ship-word-2">AIR FREIGHT</span>
+        <span class="ship-word ship-word-3">CONTAINER TRANSPORT</span>
+        <span class="ship-word ship-word-4">CUSTOMS CLEARANCE</span>
+        <span class="ship-word ship-word-5">FREIGHT FORWARDING</span>
+        <span class="ship-word ship-word-6">GENERAL CARGO</span>
+      </div>
+      <div class="container">
+        <div class="about-grid about-main">
+          <div>
+            <p class="eyebrow">ABOUT ZUUTRANS</p>
+            <h2>Moving cargo with clarity, coordination and trust.</h2>
+          </div>
+          <div class="about-copy">
+            <p>ZuuTrans Shipping is built around a simple promise: make shipping easier to understand and easier to manage. We bring together shipping coordination, cargo movement, customs support and customer communication in one clear experience.</p>
+            <p>Based in Tema, Ghana, our focus is on helping customers move goods between Ghana and international destinations with practical guidance from request to delivery.</p>
+          </div>
+        </div>
+
+        <div class="ceo-feature">
+          <div class="ceo-gallery" aria-label="ZuuTrans leadership portraits">
+            <figure class="ceo-photo ceo-photo-main">
+              <img src="ceo-portrait-1.jpg" alt="Zakaria Mohammed, CEO of ZuuTrans Shipping" loading="lazy">
+            </figure>
+            <figure class="ceo-photo ceo-photo-secondary">
+              <img src="ceo-portrait-2.jpg" alt="Zakaria Mohammed, CEO of ZuuTrans Shipping" loading="lazy">
+            </figure>
+          </div>
+          <div class="ceo-copy">
+            <p class="eyebrow">LEADERSHIP</p>
+            <h3>Meet the team behind ZuuTrans.</h3>
+            <p class="ceo-name">Zakaria Mohammed <span>• CEO</span></p>
+            <p>Built with a focus on dependable service, clear communication and practical logistics support. ZuuTrans Shipping is committed to making cargo movement from Ghana easier to coordinate and easier to trust.</p>
+            <div class="ceo-signature-line"><span>Leadership • Service • Trust</span></div>
+          </div>
+        </div>
+
+        <div class="about-pillars" aria-label="ZuuTrans values">
+          <article class="about-pillar">
+            <span class="about-pillar-number">01</span>
+            <h3>Reliable coordination</h3>
+            <p>Clear communication and organized shipment handling help keep every request moving forward.</p>
+          </article>
+          <article class="about-pillar">
+            <span class="about-pillar-number">02</span>
+            <h3>Transparent process</h3>
+            <p>Customers can request quotes, track shipments and understand the next step of their cargo journey.</p>
+          </article>
+          <article class="about-pillar">
+            <span class="about-pillar-number">03</span>
+            <h3>Customer focused</h3>
+            <p>We make it easier to reach the team, share shipment details and get support when it matters.</p>
+          </article>
+        </div>
+
+        <div class="about-focus">
+          <div>
+            <p class="eyebrow">OUR FOCUS</p>
+            <h3>From Ghana to destinations worldwide.</h3>
+          </div>
+          <div class="about-focus-list">
+            <span>Sea Freight</span>
+            <span>Air Freight</span>
+            <span>Container Transport</span>
+            <span>Customs Clearance</span>
+            <span>Freight Forwarding</span>
+            <span>General Cargo</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact-section">
+      <div class="container">
+        <div class="contact-intro">
+          <div>
+            <p class="eyebrow">LET'S MOVE YOUR CARGO</p>
+            <h2>Ready to ship?</h2>
+            <p>Our team is ready to help with shipping, container transport, customs clearance and cargo coordination from Ghana to destinations worldwide.</p>
+          </div>
+          <a class="btn btn-primary contact-whatsapp" href="https://wa.me/233548846644?text=Hello%20ZuuTrans%20Shipping%2C%20I%27d%20like%20to%20speak%20with%20your%20team." target="_blank" rel="noopener">Chat on WhatsApp</a>
+        </div>
+
+        <div class="contact-methods" aria-label="ZuuTrans contact options">
+          <a class="contact-method" href="tel:+233548846644">
+            <span class="contact-method-icon">☎</span>
+            <span><strong>Call ZuuTrans</strong><small>054 884 6644</small></span>
+          </a>
+          <a class="contact-method" href="tel:+233505052444">
+            <span class="contact-method-icon">☎</span>
+            <span><strong>Call our second line</strong><small>050 505 2444</small></span>
+          </a>
+          <a class="contact-method" href="mailto:zakariamohammed255@gmail.com">
+            <span class="contact-method-icon">✉</span>
+            <span><strong>Email us</strong><small>zakariamohammed255@gmail.com</small></span>
+          </a>
+          <div class="contact-method contact-method-static">
+            <span class="contact-method-icon">⌖</span>
+            <span><strong>Our location</strong><small>Tema, Ghana</small></span>
+          </div>
+        </div>
+
+        <div class="contact-note">
+          <strong>Need a quote?</strong> Use the form below and include your origin, destination, cargo details and preferred pickup date.
+        </div>
+
+        <div class="quote-panel">
+          <div class="quote-copy">
+            <p class="eyebrow">REQUEST A QUOTE</p>
+            <h3>Share your shipment details.</h3>
+            <p>Provide the basics below. You can include package or cargo details so ZuuTrans can understand the request before getting back to you.</p>
+            <div class="quote-support">
+              <a class="btn btn-secondary" href="https://wa.me/233548846644?text=Hello%20ZuuTrans%20Shipping%2C%20I%27d%20like%20to%20request%20a%20shipping%20quote." target="_blank" rel="noopener">WhatsApp ZuuTrans</a>
+              <span>Or submit the form and we'll follow up.</span>
+            </div>
+          </div>
+
+          <form id="quoteForm" class="quote-form" name="quote-request" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="quote-request">
+            <p class="hidden-field">
+              <label>Don’t fill this out if you're human: <input name="bot-field"></label>
+            </p>
+            <div class="form-grid">
+              <label>
+                Full name
+                <input type="text" name="name" autocomplete="name" required>
+              </label>
+              <label>
+                Phone / WhatsApp
+                <input type="tel" name="phone" autocomplete="tel" required>
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" autocomplete="email" required>
+              </label>
+              <label>
+                Shipping method
+                <select name="shipping_method" required>
+                  <option value="">Select one</option>
+                  <option>Air Freight</option>
+                  <option>Sea Freight</option>
+                  <option>Door-to-Door Delivery</option>
+                  <option>Container Transport</option>
+                  <option>Courier Service</option>
+                  <option>Customs Clearance</option>
+                  <option>Import & Export</option>
+                  <option>Not sure yet</option>
+                </select>
+              </label>
+              <label>
+                Origin
+                <input type="text" name="origin" placeholder="e.g. Tema, Ghana" required>
+              </label>
+              <label>
+                Destination
+                <input type="text" name="destination" placeholder="e.g. London, United Kingdom" required>
+              </label>
+              <label>
+                Cargo type
+                <select name="cargo_type">
+                  <option value="">Select cargo type</option>
+                  <option>General Cargo</option>
+                  <option>Containerized Cargo</option>
+                  <option>Personal Effects</option>
+                  <option>Commercial Goods</option>
+                  <option>Machinery / Equipment</option>
+                  <option>Documents / Parcels</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>
+                Container size
+                <select name="container_size">
+                  <option value="">Not applicable</option>
+                  <option>20ft</option>
+                  <option>40ft</option>
+                  <option>40ft High Cube</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>
+                Container number
+                <input type="text" name="container_number" placeholder="If available">
+              </label>
+              <label>
+                Approx. weight / tonnage
+                <input type="text" name="tonnage" inputmode="decimal" placeholder="e.g. 18.5 tons">
+              </label>
+              <label>
+                Preferred pickup date
+                <input type="date" name="pickup_date">
+              </label>
+            </div>
+            <label>
+              Cargo / shipment details
+              <textarea name="message" rows="5" placeholder="Tell us what you are shipping, quantity, dimensions, value if relevant, and any special requirements." required></textarea>
+            </label>
+            <button id="quoteSubmit" class="btn btn-primary" type="submit">Send Quote Request</button>
+            <p id="quoteMessage" class="form-message" role="status" aria-live="polite"></p>
+            <p class="form-note">By submitting this form, you are sending your request to ZuuTrans Shipping through the website. Final pricing depends on the shipment details and applicable transport, customs and handling charges.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <div><strong>ZuuTrans Shipping</strong><span>Delivering Trust Across Borders</span><span>054 884 6644 • 050 505 2444</span></div>
+      <p>© <span id="year"></span> ZuuTrans Shipping. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

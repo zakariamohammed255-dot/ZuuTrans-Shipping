@@ -1,0 +1,12 @@
+// ZuuTrans Shipping — public Supabase configuration.
+// This is the browser-safe publishable key, not a secret/service-role key.
+window.ZUUTRANS_CONFIG = {
+  supabaseUrl: 'https://amkmzuefeihawfvlmrra.supabase.co',
+  supabasePublishableKey: 'sb_publishable_txg0FD4C7yRI75gTRgRlbQ_i8PVHXLy',
+  paystackInitializeUrl: 'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/paystack-initialize',
+  paystackStatusUrl: 'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/paystack-status',
+  dutyBalanceUrl: 'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/duty-balance',
+  dutyAccountUrl: 'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/duty-account',
+  dutySignupUrl: 'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/duty-signup',
+  vinDecodeUrl: 'https://amkmzuefeihawfvlmrra.supabase.co/functions/v1/vin-decode'
+};

@@ -1,0 +1,6 @@
+ZuuTrans QA — Login/customer-record fix
+1. Start: npx serve -l 3000
+2. Open http://localhost:3000 and Car Duty.
+3. Existing customer must log in with email + password only.
+4. The site resolves the existing duty customer record by email and loads the phone/token balance server-side.
+5. Do not deploy until login, logout, reset-password, account creation, token balance and duty-check gating are tested.

@@ -1,0 +1,47 @@
+ZuuTrans Duty Checker — final hardening plan
+
+1. Supabase SQL Editor: review and run supabase/migrations/001_duty_checker_wallet.sql.
+   IMPORTANT: if duty_customers already has a different primary key/type, do not run the CREATE TABLE section; keep the ALTER/function portions and adapt only if needed.
+
+2. Edge Functions that must exist/deploy:
+   - duty-signup
+   - duty-account
+   - duty-balance
+   - duty-consume-token (new)
+   - vin-decode
+   - paystack-initialize
+   - paystack-status
+   - paystack-webhook
+
+3. Edge Function secrets:
+   - SUPABASE_SERVICE_ROLE_KEY
+   - PAYSTACK_SECRET_KEY
+   - any existing VIN/Auto.dev secret required by vin-decode
+   Never put service-role or Paystack secret keys in config.js.
+
+4. Customer rules:
+   - signup creates Auth user + duty_customers row
+   - new customer starts at 0 tokens
+   - login uses email + password
+   - duty-account resolves customer by authenticated email
+   - missing phone does NOT block login; phone is retained for payments/account data
+
+5. Token security:
+   - browser balance is display-only
+   - duty-consume-token performs atomic server-side deduction
+   - never deduct tokens with saveTokens(tokens-1) as the source of truth
+
+6. Payment security:
+   - Paystack webhook/verification credits tokens only after verified successful payment
+   - verify reference, amount, currency, and customer association
+   - credit operation must be idempotent
+
+7. Test in this order:
+   A. New signup -> 0 tokens
+   B. Logout -> balance hidden
+   C. Login -> customer balance loads
+   D. 0 tokens -> duty check blocked
+   E. Successful Paystack payment -> tokens credited once
+   F. Duty check -> exactly 1 token deducted server-side
+   G. Two simultaneous checks with one token -> only one succeeds
+   H. Logout/login -> balance remains correct
